@@ -7,7 +7,8 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , redis = require('redis');
 
 var app = express();
 
@@ -22,12 +23,24 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+var redisCli = redis.createClient();
+
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
 app.get('/', routes.index);
+app.get('/days/:month', function(req, res) {
+  redisCli.keys(req.params.month+':*', function(err, val) {
+    res.send(val);
+  });
+});
+app.get('/days/:month/:userid', function(req, res) {
+  redisCli.lrange(req.params.month + ':' + req.params.userid, 0, -1, function(err, val) {
+    res.send(val);
+  });
+});
 app.get('/users', user.list);
 
 http.createServer(app).listen(app.get('port'), function(){
