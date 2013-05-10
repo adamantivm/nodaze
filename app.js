@@ -30,7 +30,11 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+// Application routes: they produce HTML
 app.get('/', routes.index);
+app.get('/months/:month', routes.index);
+
+// API routes (they return JSON data)
 app.get('/days/:month', function(req, res) {
   redisCli.keys(req.params.month+':*', function(err, val) {
     res.send(val);
@@ -41,7 +45,11 @@ app.get('/days/:month/:userid', function(req, res) {
     res.send(val);
   });
 });
-app.get('/users', user.list);
+app.get('/users/:userid', function(req, res) {
+  redisCli.hgetall(req.params.userid, function(err, val) {
+    res.send(val);
+  });
+});
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
