@@ -8,9 +8,10 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , redis = require('redis');
+  , redis = require('./redis');
 
 var app = express();
+var redisCli = redis.redisCli;
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -22,8 +23,6 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
-
-var redisCli = redis.createClient();
 
 // development only
 if ('development' == app.get('env')) {
