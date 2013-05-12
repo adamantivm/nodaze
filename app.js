@@ -32,7 +32,7 @@ if ('development' == app.get('env')) {
 
 // Application routes: they produce HTML
 app.get('/', routes.index);
-app.get('/months/:month', routes.index);
+app.get('/months/:month', routes.month);
 
 // API routes (they return JSON data)
 app.get('/days/:month', function(req, res) {
