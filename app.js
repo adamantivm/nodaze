@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -33,6 +32,9 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/months/:month', routes.month);
 
+// Submit a new absent day for a user
+app.post('/add', routes.add);
+
 // API routes (they return JSON data)
 app.get('/days/:month', function(req, res) {
   redisCli.keys(req.params.month+':*', function(err, val) {
@@ -40,7 +42,7 @@ app.get('/days/:month', function(req, res) {
   });
 });
 app.get('/days/:month/:userid', function(req, res) {
-  redisCli.lrange(req.params.month + ':' + req.params.userid, 0, -1, function(err, val) {
+  redisCli.smembers(req.params.month + ':' + req.params.userid, function(err, val) {
     res.send(val);
   });
 });

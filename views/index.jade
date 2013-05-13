@@ -3,8 +3,19 @@ extends layout
 block content
   h1 Non-working days for month 
     span(id='month')= month
+    span  (
+    span= (new Date(2013,month,1)).toDateString().split(" ")[1]
+    span )
   div
     ul(id='list')
   a(href= month-1) previous
   span 
   a(href= Number(month)+1) next
+  h1 Add non-working day
+    form(action='/add',method='post')
+      label(for='user') User:
+      input(name='user', type='text', value='')
+      label(for='day') Day:
+      input(name='day', type='text', value='')
+      input(name='month', type='hidden', value= month)
+      input(type='submit')
